@@ -1,43 +1,52 @@
-# Elements of the game: 
-#- 6 colors 
-#- 4 pegs 
-#- 12 turns 
-#- 4 color slots 
+module Mastermind
+    
+    $colors = ["red", "blue", "white", "green", "black", "orange"]
 
-# goal of the game: 
-# guess the code within 12 turns
-# each turn receive feedback (4 pegs)
-# pegs are either white or red and 
-# if it's the right color and in the right
-# order you will get a red peg for that one color
-# if it's the right color but not the right 
-# order you will get a white peg
+    
 
-# GOAL : Able to play mastermind vs a computer 
+    $user_color_input = []
 
-# 2. input from user = 4 colors, 6 colors available. 
-# can input 4 colors at each turn
-# 
-# 3. ouput: return 0-4 pegs if right color and order 
-# red peg elsif right color but false order return white peg
-# 
+    $computer_colors_code = []
 
+    class Game
+        def initialize(player_1, player_2)
+            @player_1 = player_1.new()
+            @player_2 = player_2.new()
+        end
+        def play 
+            if $computer_colors_code == $user_color_input
+                puts "Player 1 wins"
+            else
+                puts "wait"
+            end
+        end
+        
+    end
 
-# 4. Steps 
+    class Player
+        
+    end
 
-# 1. create 6 colors
-# 2. create 4 pegs output, and create 4 variables for 
-# user color input
-# 3. create a loop from 0 -> 12
-# 4. create a class player and divide it to computer and human
-# 5. give computer the ability to choose 4 random colors 
-# from the list of 6 colors. Before the start of the game.
-# 6. Make the human able to input 4 colors each turn and them to
-# a method that will compare the code and the breaker-code
-# 7. create a method that will detect each color and if it's in the same order
-# as the original code and have the same color, will give a red peg
-# 8. create a program that will detect each color and if it's the same color but not the same order 
-# will give a white peg 
-# 9. the good order + good color take precedence over the good color alone
-# 10. outputs the pegs
-# 11. until the end of the 12 turns or, the code is broken, continue the game.
+    class HumanPlayer < Player
+
+        puts "I'am a human i have choice between colors #{$colors}"
+        puts "Guess the colors"
+        color_1 = gets.chomp
+        color_2 = gets.chomp
+        color_3 = gets.chomp
+        color_4 = gets.chomp
+
+        $user_color_input = [color_1, color_2, color_3, color_4]
+    end
+    class ComputerPlayer < Player
+        puts "Me computer i have choice between colors #{$colors}"
+
+        $computer_colors_code = ["red", "white", "green", "orange"]
+
+    end
+
+end
+
+include Mastermind
+
+Game.new(HumanPlayer, ComputerPlayer).play
