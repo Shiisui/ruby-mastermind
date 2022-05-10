@@ -2,61 +2,106 @@ module Mastermind
     
     $colors = ["red", "blue", "white", "green", "black", "orange"]
 
-    $user_color_input = []
+    $code_breaker = []
 
-    $computer_colors_code = []
+    $code_maker = []
 
     class Game
-
-        def initialize(player_1, player_2)
+        @@makeorguess = 0
+        def initialize(player_1, player_2, makeorguess)
             @player_1 = player_1.new()
             @player_2 = player_2.new()
+            @@makeorguess = makeorguess
         end
+            
 
         def play 
             game = 0
-            while (game < 12) do
-                if $computer_colors_code == $user_color_input
-                    puts "Player 1 wins"
-                    game = 100
-                elsif game > 0 
-                   verify_order_and_color
-                   puts "hint, red pegs: #{$red_peg} white pegs: #{$white_peg}"
-                   $red_peg = 0
-                   $white_peg = 0
+            if @@makeorguess == 1    
+                code_make
+                while (game < 12) do
+                    if $code_maker == $code_breaker
+                        puts "Player 1 wins"
+                        game = 100
+                    elsif game > 0 
+                    verify_order_and_color
+                    puts "hint, red pegs: #{$red_peg} white pegs: #{$white_peg}"
+                    $red_peg = 0
+                    $white_peg = 0
+                    end
+                    if game != 100
+                        code_guess
+                        game +=1
+                    end
                 end
-                if game != 100
-                    humanPlay 
-                    game +=1
+            elsif @@makeorguess == 2
+                code_make
+                while (game < 12) do
+                    if $code_maker == $code_breaker
+                        puts "Player 1 wins"
+                        game = 100
+                    elsif game > 0 
+                    verify_order_and_color
+                    puts "hint, red pegs: #{$red_peg} white pegs: #{$white_peg}"
+                    $red_peg = 0
+                    $white_peg = 0
+                    end
+                    if game != 100
+                        code_guess 
+                        game +=1
+                    end
                 end
+            end
+
+        end
+
+        def code_guess
+            if @@makeorguess == 1    
+                puts "Guess the colors"
+                color_1 = gets.chomp
+                color_2 = gets.chomp
+                color_3 = gets.chomp
+                color_4 = gets.chomp
+
+                $code_breaker = [color_1, color_2, color_3, color_4]
+            elsif @@makeorguess == 2
+                $code_breaker = $code_maker
             end
         end
 
-        def humanPlay 
-            puts "Guess the colors"
-            color_1 = gets.chomp
-            color_2 = gets.chomp
-            color_3 = gets.chomp
-            color_4 = gets.chomp
+        def code_make 
+            if @@makeorguess == 1
+                $code_maker = $colors.sample(4)
+            elsif @@makeorguess == 2
+                puts "Make the code"
+                color_1 = gets.chomp
+                color_2 = gets.chomp
+                color_3 = gets.chomp
+                color_4 = gets.chomp
 
-            $user_color_input = [color_1, color_2, color_3, color_4]
+                $code_maker = [color_1, color_2, color_3, color_4]
+            end
         end
+
+
 
         def verify_order_and_color
             $red_peg = 0
             $white_peg = 0
             i = 0
-            $user_color_input.each do |elem|
-                if $computer_colors_code.any?(elem) && elem != $computer_colors_code[i]
+            $code_breaker.each do |elem|
+                if $code_maker.any?(elem) && elem != $code_maker[i]
                     $white_peg += 1
                     i += 1
                 
-                elsif $computer_colors_code.any?(elem) && elem == $computer_colors_code[i]
+                elsif $code_maker.any?(elem) && elem == $code_maker[i]
                     $red_peg += 1
                     i += 1
                 end 
             end
         end
+
+       
 
        
     end
@@ -66,13 +111,9 @@ module Mastermind
     end
 
     class HumanPlayer < Player
-        puts "Choice between colors #{$colors}"
+        puts "#{$colors}"
     end
     class ComputerPlayer < Player
-       
-        $computer_colors_code = $colors.sample(4)
-           
-        p $computer_colors_code
        
     end
 
@@ -80,4 +121,11 @@ end
 
 include Mastermind
 
-Game.new(HumanPlayer, ComputerPlayer).play
+print "Type 1 to be guesser or Type 2 to create the code: "
+
+playerOne = gets.chomp.to_i
+
+
+
+
+Game.new(HumanPlayer, ComputerPlayer, playerOne).play
