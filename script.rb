@@ -6,10 +6,10 @@ module Mastermind
 
     $code_maker = []
 
-    $round = nil
+    $k = 0
 
-    $white_data = []
-    $red_data = []
+    $no_match_data = []
+  
 
     class Game
         @@makeorguess = 0
@@ -27,12 +27,13 @@ module Mastermind
                 while (game < 12) do
                     if $code_maker == $code_breaker
                         puts "Player 1 wins"
+                        puts "win red pegs: 4 white pegs: 0"
+                        p $code_breaker
                         game = 100
                     elsif game > 0 
                     verify_order_and_color
                     puts "hint, red pegs: #{$red_peg} white pegs: #{$white_peg}"
-                    $red_peg = 0
-                    $white_peg = 0
+                   
                     end
                     if game != 100
                         code_guess
@@ -41,15 +42,16 @@ module Mastermind
                 end
             elsif @@makeorguess == 2
                 code_make
-                while (game < 12) do
+                while (game < 13) do
                     if $code_maker == $code_breaker
                         puts "Player 1 wins"
+                        puts "win red pegs: 4 white pegs: 0"
+                        p $code_breaker
                         game = 100
                     elsif game > 0 
                     verify_order_and_color
                     puts "hint, red pegs: #{$red_peg} white pegs: #{$white_peg}"
-                    $red_peg = 0
-                    $white_peg = 0
+                    
                     end
                     if game != 100
                         code_guess 
@@ -70,17 +72,15 @@ module Mastermind
 
                 $code_breaker = [color_1, color_2, color_3, color_4]
             elsif @@makeorguess == 2
-                if $red_data.length != 0 || $white_data.length != 0
-                    $code_breaker << $red_data
-                    $code_breaker << $white_data
-                    $code_breaker.uniq
-                    $red_data = []
-                    $white_data = []
-                elsif $red_data.length == 0 || $white_data.length == 0
+               
+                if $k == 0
                     $code_breaker = $colors.sample(4)
+                elsif $white_peg == 4 || $white_peg == 3 && $red_peg == 1 || $white_peg == 2 && $red_peg == 2 || $red_peg == 3 && $white_peg == 1
+                    $code_breaker = $code_breaker.shuffle
+                    $k = 1
                 end
-                
-
+                    $colors = $colors - $no_match_data
+                    
             end
         end
 
@@ -103,21 +103,23 @@ module Mastermind
         def verify_order_and_color
             $red_peg = 0
             $white_peg = 0
-            
+            $no_match = 0
             i = 0
             $code_breaker.each do |elem|
                 if $code_maker.any?(elem) && elem != $code_maker[i]
                     $white_peg += 1
-                    $white_data << elem
                     i += 1
                     
                 elsif $code_maker.any?(elem) && elem == $code_maker[i]
                     $red_peg += 1
-                    $red_data << elem
                     i += 1
-                end 
+                else 
+                    $no_match_data << elem
+                    $no_match +=1
+                end
             end
-            $round = 1
+            
+            
            
         end
 
